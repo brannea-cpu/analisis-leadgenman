@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>@leadgenman — Análisis Instagram</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --surface3: #222233;
+    --border: #2a2a40;
+    --accent: #7c5cfc;
+    --accent2: #a78bfa;
+    --accent3: #34d399;
+    --accent4: #f59e0b;
+    --accent5: #ef4444;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --reel: #a78bfa;
+    --carousel: #34d399;
+    --photo: #f59e0b;
+    --pinned: #60a5fa;
+    --high: #34d399;
+    --med: #f59e0b;
+    --low: #94a3b8;
+    --glow: rgba(124, 92, 252, 0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .hero {
+    background: linear-gradient(135deg, #0d0d1a 0%, #12122a 50%, #0a0f1a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 32px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(124,92,252,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .avatar {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #06b6d4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+    border: 3px solid var(--accent);
+    box-shadow: 0 0 30px rgba(124,92,252,0.4);
+  }
+  .hero-text h1 {
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+  .hero-text .handle {
+    font-size: 18px;
+    color: var(--accent2);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .hero-text .bio {
+    color: var(--text2);
+    font-size: 14px;
+    max-width: 500px;
+    margin-top: 8px;
+  }
+  .verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(124,92,252,0.15);
+    border: 1px solid rgba(124,92,252,0.3);
+    color: var(--accent2);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .stats-row {
+    display: flex;
+    gap: 24px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 24px;
+    text-align: center;
+    min-width: 120px;
+  }
+  .stat-box .num {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent2);
+    line-height: 1;
+  }
+  .stat-box .label {
+    font-size: 12px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+  }
+  .date-tag {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 16px;
+  }
+
+  /* MAIN */
+  .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px;
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 48px;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .icon {
+    width: 32px; height: 32px;
+    background: var(--glow);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+
+  /* NOTICE */
+  .notice {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--accent4);
+    margin-bottom: 32px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  /* INSIGHTS GRID */
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .insight-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .insight-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .insight-card.purple::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .insight-card.green::before { background: linear-gradient(90deg, var(--accent3), #10b981); }
+  .insight-card.yellow::before { background: linear-gradient(90deg, var(--accent4), #fbbf24); }
+  .insight-card.red::before { background: linear-gradient(90deg, var(--accent5), #f87171); }
+  .insight-card.blue::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+  .insight-card .ic-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    margin-bottom: 8px;
+  }
+  .insight-card .ic-value {
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .insight-card .ic-sub {
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .insight-card.purple .ic-value { color: var(--accent2); }
+  .insight-card.green .ic-value { color: var(--accent3); }
+  .insight-card.yellow .ic-value { color: var(--accent4); }
+  .insight-card.red .ic-value { color: var(--accent5); }
+  .insight-card.blue .ic-value { color: #60a5fa; }
+
+  /* TABLE */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead th {
+    background: var(--surface2);
+    color: var(--text3);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  tbody td {
+    padding: 12px 14px;
+    vertical-align: middle;
+    color: var(--text2);
+  }
+  tbody td.num { color: var(--text); font-weight: 600; }
+  tbody td.eng-high { color: var(--high); font-weight: 700; }
+  tbody td.eng-med { color: var(--med); font-weight: 600; }
+  tbody td.eng-low { color: var(--text3); }
+  .caption-cell a {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 12px;
+    display: block;
+    max-width: 340px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .caption-cell a:hover { color: var(--accent2); }
+
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .badge-reel { background: rgba(167,139,250,0.15); color: var(--reel); border: 1px solid rgba(167,139,250,0.3); }
+  .badge-carousel { background: rgba(52,211,153,0.12); color: var(--carousel); border: 1px solid rgba(52,211,153,0.3); }
+  .badge-photo { background: rgba(245,158,11,0.12); color: var(--photo); border: 1px solid rgba(245,158,11,0.3); }
+  .badge-pinned { background: rgba(96,165,250,0.1); color: var(--pinned); border: 1px solid rgba(96,165,250,0.25); margin-left: 4px; }
+
+  /* TOP PERFORMERS */
+  .top-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+  }
+  .top-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .top-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .top-card.gold { border-color: rgba(245,158,11,0.4); }
+  .top-card.silver { border-color: rgba(148,163,184,0.3); }
+  .top-card.bronze { border-color: rgba(180,120,80,0.3); }
+  .card-header {
+    padding: 16px 18px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface2);
+  }
+  .card-rank {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .gold .card-rank { color: #fbbf24; }
+  .silver .card-rank { color: #94a3b8; }
+  .bronze .card-rank { color: #cd7f32; }
+  .card-body { padding: 18px; }
+  .card-caption {
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 14px;
+    line-height: 1.5;
+    font-style: italic;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+  }
+  .card-metrics {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .metric-pill {
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text);
+  }
+  .metric-pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .metric-pill .dot.green { background: var(--accent3); }
+  .metric-pill .dot.purple { background: var(--accent2); }
+  .metric-pill .dot.yellow { background: var(--accent4); }
+  .card-why {
+    font-size: 12px;
+    color: var(--text3);
+    background: var(--surface3);
+    border-radius: 8px;
+    padding: 10px 12px;
+    line-height: 1.5;
+  }
+  .card-why strong { color: var(--text2); }
+  .card-link {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--accent2);
+    text-decoration: none;
+    border: 1px solid rgba(167,139,250,0.3);
+    border-radius: 6px;
+    padding: 5px 12px;
+    transition: background 0.15s;
+  }
+  .card-link:hover { background: rgba(124,92,252,0.15); }
+
+  /* PATTERNS */
+  .patterns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .pattern-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .pattern-card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .pattern-card p, .pattern-card li {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+  .pattern-card ul { padding-left: 16px; }
+  .pattern-card li { margin-bottom: 4px; }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .bar-label { min-width: 70px; color: var(--text2); font-weight: 500; }
+  .bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--surface3);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-value { min-width: 50px; text-align: right; color: var(--text3); font-size: 12px; }
+
+  /* VIDEOS SECTION */
+  .videos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .video-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .video-thumb {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+    background: var(--surface2);
+  }
+  .video-thumb-placeholder {
+    width: 100%;
+    height: 160px;
+    background: linear-gradient(135deg, var(--surface2), var(--surface3));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+  }
+  .video-body { padding: 16px; }
+  .video-body .vcaption {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+  .video-body .vmeta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .vmeta-item {
+    font-size: 12px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .vmeta-item span { color: var(--text2); font-weight: 600; }
+
+  /* SCRIPTS */
+  .scripts-list { display: flex; flex-direction: column; gap: 24px; }
+  .script-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .script-header {
+    background: linear-gradient(135deg, var(--surface2), var(--surface3));
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .script-num {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 16px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .script-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .script-header .stag {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  .script-body { padding: 20px; }
+  .script-section {
+    margin-bottom: 16px;
+  }
+  .script-section:last-child { margin-bottom: 0; }
+  .script-section .slabel {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .script-section .stext {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 12px 14px;
+    border-left: 3px solid var(--accent);
+  }
+  .script-section .stext.hook {
+    border-left-color: var(--accent3);
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .script-section .stext.caption-draft {
+    border-left-color: var(--accent4);
+    font-style: italic;
+  }
+  .hashtags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .htag {
+    background: rgba(124,92,252,0.12);
+    border: 1px solid rgba(124,92,252,0.25);
+    color: var(--accent2);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+
+  /* FORMAT CHART */
+  .format-visual {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .fmt-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .fmt-circle {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: white;
+  }
+  .fmt-circle.reel { background: linear-gradient(135deg, #7c5cfc, #a78bfa); }
+  .fmt-circle.carousel { background: linear-gradient(135deg, #059669, #34d399); }
+  .fmt-circle.photo { background: linear-gradient(135deg, #d97706, #f59e0b); }
+  .fmt-label { font-size: 12px; color: var(--text3); text-align: center; }
+  .fmt-sublabel { font-size: 10px; color: var(--text3); text-align: center; }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 32px;
+    color: var(--text3);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 16px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .hero { padding: 28px 20px; }
+    .hero-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .main { padding: 20px; }
+    .top-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="avatar">L</div>
+    <div class="hero-text">
+      <div class="handle">@leadgenman <span class="verified-badge">✓ Verificado</span></div>
+      <h1>Análisis de Instagram</h1>
+      <div class="bio">AI + Lead Generation · Automatización · Herramientas gratuitas para builders</div>
+    </div>
+  </div>
+  <div style="max-width:1200px;margin:0 auto;padding:0;">
+    <div class="stats-row">
+      <div class="stat-box"><div class="num">340.3K</div><div class="label">Seguidores</div></div>
+      <div class="stat-box"><div class="num">633</div><div class="label">Posts</div></div>
+      <div class="stat-box"><div class="num">12</div><div class="label">Posts analizados</div></div>
+      <div class="stat-box"><div class="num">587</div><div class="label">Cmts avg Carrusel</div></div>
+      <div class="stat-box"><div class="num">157</div><div class="label">Cmts avg Reel</div></div>
+      <div class="stat-box"><div class="num">0.70%</div><div class="label">Máx engagement</div></div>
+    </div>
+    <div class="date-tag">Análisis generado el 2 de mayo 2026 · Datos via ScrapeCreators API</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- NOTICE -->
+  <div class="notice">
+    <span>⚠️</span>
+    <span>La API de Instagram (vía ScrapeCreators) solo expone las <strong>12 publicaciones más recientes</strong> del perfil. El análisis cubre del 28 de abril al 1 de mayo 2026, más los 3 posts fijados. Los <strong>likes están ocultos</strong> por política de Instagram — el engagement se mide por comentarios / seguidores.</span>
+  </div>
+
+  <!-- KPI GRID -->
+  <div class="section">
+    <div class="section-title"><div class="icon">📊</div> KPIs Clave</div>
+    <div class="insights-grid">
+      <div class="insight-card purple">
+        <div class="ic-label">Post estrella</div>
+        <div class="ic-value">2,379</div>
+        <div class="ic-sub">comentarios · Carrusel "5 Claude Code folders"</div>
+      </div>
+      <div class="insight-card green">
+        <div class="ic-label">Formato ganador</div>
+        <div class="ic-value">Carrusel</div>
+        <div class="ic-sub">587 cmts promedio vs 157 de Reels (3.7× más)</div>
+      </div>
+      <div class="insight-card yellow">
+        <div class="ic-label">Video más visto</div>
+        <div class="ic-value">29,183</div>
+        <div class="ic-sub">views · Reel "7 herramientas free tier"</div>
+      </div>
+      <div class="insight-card blue">
+        <div class="ic-label">Hashtags usados</div>
+        <div class="ic-value">0</div>
+        <div class="ic-sub">Sin hashtags en todos los posts analizados</div>
+      </div>
+      <div class="insight-card green">
+        <div class="ic-label">Captions</div>
+        <div class="ic-value">Larga</div>
+        <div class="ic-sub">83% de posts usan captions +300 caracteres</div>
+      </div>
+      <div class="insight-card red">
+        <div class="ic-label">Motor de comments</div>
+        <div class="ic-value">Keyword CTA</div>
+        <div class="ic-sub">100% usa "Comment X" + ManyChat automation</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="section">
+    <div class="section-title"><div class="icon">📋</div> Todas las Publicaciones Analizadas</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Fecha</th>
+            <th>Formato</th>
+            <th>Likes</th>
+            <th>Comentarios</th>
+            <th>Engagement</th>
+            <th>Vistas</th>
+            <th>Caption (preview)</th>
+            <th>Caption Size</th>
+            <th>#Tags</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td><td>2026-05-01</td>
+            <td><span class="badge badge-reel">Reel</span></td>
+            <td>—</td><td class="num">283</td>
+            <td class="eng-med">0.08%</td>
+            <td class="num">5,459</td>
+            <td class="caption-cell"><a href="https://www.instagram.com/reel/DXzex0PtP1f/" target="_blank">Stop paying OpenAI. Run DeepSeek, Qwen3 and GPT-OSS locally for free...</a></td>
+            <td>Larga</td><td>0</td>
+          </tr>
+          <tr>
+            <td>2</td><td>2026-04-30</td>
+            <td><span class="badge badge-carousel">Carrusel</span></td>
+            <td>—</td><td class="num eng-high">2,379</td>
+            <td class="eng-high">0.70%</td>
+            <td>—</td>
+            <td class="caption-cell"><a href="https://www.instagram.com/reel/DXxAsiXDQ9L/" target="_blank">Most people use Claude Code wrong. The fix lives in five folders...</a></td>
+            <td>Larga</td><td>0</td>
+          </tr>
+          <tr>
+            <td>3</td><td>2026-04-30</td>
+            <td><span class="badge badge-carousel">Carrusel</span></td>
+            <td>—</td><td class="num">49</td>
+            <td class="eng-low">0.01%</td>
+            <td>—</td>
+            <td class="caption-cell"><a href="https://www.instagram.com/reel/DXxVisyjRiv/" target="_blank">Most cold emailers have a system for leads, sequences... but not warmup...</a></td>
+            <td>Larga</td><td>0</td>
+          </tr>
+          <tr>
+            <td>4</td><td>2026-04-30</td>
+            <td><span class="badge badge-reel">Reel</span></td>
+            <td>—</td><td class="num">125</td>
+            <td class="eng-low">0.04%</td>
+            <td class="num">2,542</td>
+            <td class="caption-cell"><a href="https://www.instagram.com/reel/DXxNluHNfIs/" target="_blank">Docs used to be the thing I avoided for months after launch...</a></td>
+            <td>Larga</td><td>0</td>
+          </tr>
+          <tr>
+            <td>5</td><td>2026-04-30</td>
+            <td><span class="badge badge-reel">Reel</span></td>
+            <td>—</td><td class="num">180</td>
+            <td class="eng-med">0.05%</td>
+            <td class="num">3,278</td>
+            <td class="caption-cell"><a href="https://www.instagram.com/reel/DXw1cguNHe0/" target="_blank">Everyone's building AI agents. Almost nobody's getting them to actually work...</a></td>
+            <td>Larga</td><td>0</td>
+          </tr>
+          <tr>
+            <td>6</td><td>2026-04-30</td>
+            <td><span class="badge badge-photo">Foto</span></td>
+            <td>—</td><td class="num">150</td>
+            <td class="eng-low">0.04%</td>
+            <td>—</td>
+            <td class="caption-cell"><a href="https://www.instagram.com/reel/DXwGePYDawL/" target="_blank">Vibe coding tricked me into thinking I shipped a product. Cursor wrote the features...</a></td>
+            <td>Larga</td><td>0</td>
+          </tr>
+          <tr>
+            <td>7</td><td>2026-04-29</td>
+            <td><span class="badge badge-carousel">Carrusel</span></td>
+            <td>—</td><td class="num">154</td>
+            <td class="eng-med">0.05%</td>
+            <td>—</td>
+            <td class="caption-cell"><a href="https://www.instagram.com/reel/DXthLkEjRuo/" target="_blank">Everyone's obsessing over cold email copy. Better subject lines. More personalization...</a></td>
+            <td>Larga</td><td>0</td>
+          </tr>
+          <tr>
+            <td>8</td><td>2026-04-29</td>
+            <td><span class="badge badge-reel">Reel</span></td>
+            <td>—</td><td class="num">20</td>
+            <td class="eng-low">0.01%</td>
+            <td class="num">6,620</td>
+            <td class="caption-cell"><a href="https://www.instagram.com/reel/DXu2pucDbD-/" target="_blank">Get your n8n workflows and automation powered by openrouter...</a></td>
+            <td>Corta</td><td>0</td>
+          </tr>
+          <tr>
+            <td>9</td><td>2026-04-28</td>
+            <td><span class="badge badge-reel">Reel</span></td>
+            <td>—</td><td class="num">229</td>
+            <td class="eng-med">0.07%</td>
+            <td class="num">5,261</td>
+            <td class="caption-cell"><a href="https://www.instagram.com/reel/DXsQtwOjSOw/" target="_blank">Comment 'Purple' to avoid purple ai slop using google stitch, claude design...</a></td>
+            <td>Corta</td><td>0</td>
+          </tr>
+          <tr>
+            <td>10</td><td>2026-03-31</td>
+            <td><span class="badge badge-reel">Reel</span> <span class="badge badge-pinned">📌</span></td>
+            <td>—</td><td class="num">103</td>
+            <td class="eng-low">0.03%</td>
+            <td class="num">29,183</td>
+            <td class="caption-cell"><a href="https://www.instagram.com/reel/DWjy_UlDep-/" target="_blank">Building with AI stopped feeling like a hack and started feeling like a process...</a></td>
+            <td>Larga</td><td>0</td>
+          </tr>
+          <tr>
+            <td>11</td><td>2026-03-19</td>
+            <td><span class="badge badge-carousel">Carrusel</span> <span class="badge badge-pinned">📌</span></td>
+            <td>—</td><td class="num">172</td>
+            <td class="eng-med">0.05%</td>
+            <td>—</td>
+            <td class="caption-cell"><a href="https://www.instagram.com/reel/DWFH0VyDZro/" target="_blank">Most people use Claude Code like a chatbot. That's not how it works...</a></td>
+            <td>Larga</td><td>0</td>
+          </tr>
+          <tr>
+            <td>12</td><td>2025-07-03</td>
+            <td><span class="badge badge-carousel">Carrusel</span> <span class="badge badge-pinned">📌</span></td>
+            <td>—</td><td class="num">183</td>
+            <td class="eng-med">0.05%</td>
+            <td>—</td>
+            <td class="caption-cell"><a href="https://www.instagram.com/reel/DLrDeBRNuSW/" target="_blank">LLMs are AI models, but not all AI models are LLMs. 8 architectures...</a></td>
+            <td>Larga</td><td>0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TOP PERFORMERS -->
+  <div class="section">
+    <div class="section-title"><div class="icon">🏆</div> Top 5 Posts por Engagement</div>
+    <div class="top-grid">
+
+      <div class="top-card gold">
+        <div class="card-header">
+          <div>
+            <div class="card-rank">#1</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px;">Carrusel · 30 Apr 2026</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span class="badge badge-carousel">Carrusel</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-caption">"Most people use Claude Code wrong, and the fix lives in five folders. CLAUDE.md isn't a config file — it's your AI's brain..."</div>
+          <div class="card-metrics">
+            <div class="metric-pill"><div class="dot green"></div>2,379 comentarios</div>
+            <div class="metric-pill"><div class="dot purple"></div>0.70% engagement</div>
+            <div class="metric-pill"><div class="dot yellow"></div>CTA: "Comment FOLDER"</div>
+          </div>
+          <div class="card-why"><strong>Por qué funcionó:</strong> Golpeó el nicho exacto de su audiencia (devs usando Claude Code mal), combinó "error de usuario" + "solución concreta" + automation CTA. La estructura de 5 folders es memorable y guardable.</div>
+          <a class="card-link" href="https://www.instagram.com/reel/DXxAsiXDQ9L/" target="_blank">→ Ver post</a>
+        </div>
+      </div>
+
+      <div class="top-card silver">
+        <div class="card-header">
+          <div>
+            <div class="card-rank">#2</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px;">Reel · 1 May 2026</div>
+          </div>
+          <span class="badge badge-reel">Reel</span>
+        </div>
+        <div class="card-body">
+          <div class="card-caption">"Stop paying OpenAI. Run DeepSeek, Qwen3 and GPT-OSS locally for free. Most people building AI workflows are bleeding money on API calls..."</div>
+          <div class="card-metrics">
+            <div class="metric-pill"><div class="dot green"></div>283 comentarios</div>
+            <div class="metric-pill"><div class="dot purple"></div>5,459 vistas</div>
+            <div class="metric-pill"><div class="dot yellow"></div>CTA: "Comment W"</div>
+          </div>
+          <div class="card-why"><strong>Por qué funcionó:</strong> Hook anti-gasto ("Stop paying OpenAI") + propuesta de ahorro concreta. La promesa de "gratis" dispara el click. Tutorial en 60 segundos = bajo esfuerzo percibido para la audiencia.</div>
+          <a class="card-link" href="https://www.instagram.com/reel/DXzex0PtP1f/" target="_blank">→ Ver post</a>
+        </div>
+      </div>
+
+      <div class="top-card bronze">
+        <div class="card-header">
+          <div>
+            <div class="card-rank">#3</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px;">Reel · 28 Apr 2026</div>
+          </div>
+          <span class="badge badge-reel">Reel</span>
+        </div>
+        <div class="card-body">
+          <div class="card-caption">"Comment 'Purple' to avoid purple AI slop using Google Stitch, Claude design mode..."</div>
+          <div class="card-metrics">
+            <div class="metric-pill"><div class="dot green"></div>229 comentarios</div>
+            <div class="metric-pill"><div class="dot purple"></div>5,261 vistas</div>
+            <div class="metric-pill"><div class="dot yellow"></div>CTA: "Comment Purple"</div>
+          </div>
+          <div class="card-why"><strong>Por qué funcionó:</strong> Hook con problema reconocible ("AI slop") + la palabra "Purple" como keyword única dispara curiosidad. El CTA de una sola palabra es fácil de ejecutar — baja fricción = más comentarios.</div>
+          <a class="card-link" href="https://www.instagram.com/reel/DXsQtwOjSOw/" target="_blank">→ Ver post</a>
+        </div>
+      </div>
+
+      <div class="top-card">
+        <div class="card-header">
+          <div>
+            <div class="card-rank" style="color:var(--accent2);">#4</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px;">Carrusel · Fijado · Jul 2025</div>
+          </div>
+          <span class="badge badge-carousel">Carrusel</span>
+        </div>
+        <div class="card-body">
+          <div class="card-caption">"LLMs are AI models, but not all AI models are LLMs. 8 specialized architectures that change everything..."</div>
+          <div class="card-metrics">
+            <div class="metric-pill"><div class="dot green"></div>183 comentarios</div>
+            <div class="metric-pill"><div class="dot purple"></div>0.05% engagement</div>
+            <div class="metric-pill"><div class="dot yellow"></div>Carrusel educativo</div>
+          </div>
+          <div class="card-why"><strong>Por qué funcionó:</strong> Formato lista con número ("8 arquitecturas") + educación de alto nivel. Lo suficientemente técnico para generar guardados, lo suficientemente claro para ser compartido por beginners.</div>
+          <a class="card-link" href="https://www.instagram.com/reel/DLrDeBRNuSW/" target="_blank">→ Ver post</a>
+        </div>
+      </div>
+
+      <div class="top-card">
+        <div class="card-header">
+          <div>
+            <div class="card-rank" style="color:var(--accent2);">#5</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px;">Reel · 30 Apr 2026</div>
+          </div>
+          <span class="badge badge-reel">Reel</span>
+        </div>
+        <div class="card-body">
+          <div class="card-caption">"Everyone's building AI agents. Almost nobody's getting them to actually work consistently..."</div>
+          <div class="card-metrics">
+            <div class="metric-pill"><div class="dot green"></div>180 comentarios</div>
+            <div class="metric-pill"><div class="dot purple"></div>3,278 vistas</div>
+            <div class="metric-pill"><div class="dot yellow"></div>0.05% engagement</div>
+          </div>
+          <div class="card-why"><strong>Por qué funcionó:</strong> Contraste validador ("todos lo hacen, casi nadie lo logra") que hace sentir al viewer que encontró la respuesta que los demás no tienen. Posiciona al creador como insider.</div>
+          <a class="card-link" href="https://www.instagram.com/reel/DXw1cguNHe0/" target="_blank">→ Ver post</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOP VIDEOS BY VIEWS -->
+  <div class="section">
+    <div class="section-title"><div class="icon">🎬</div> Top Videos por Vistas</div>
+    <div class="videos-grid">
+
+      <div class="video-card">
+        <div class="video-thumb-placeholder">🚀</div>
+        <div class="video-body">
+          <div class="vcaption">7 herramientas AI free tier — zero excuses left</div>
+          <div class="vmeta">
+            <div class="vmeta-item">👁 <span>29,183</span> vistas</div>
+            <div class="vmeta-item">💬 <span>103</span> cmts</div>
+            <div class="vmeta-item">📅 <span>31 Mar 2026</span></div>
+          </div>
+          <div style="font-size:12px;color:var(--text3);line-height:1.5;">"One model writes the code, one framework ships it, one database holds it together..." — Lista inspiracional + CTA de acción inmediata.</div>
+          <a class="card-link" href="https://www.instagram.com/reel/DWjy_UlDep-/" target="_blank">→ Ver reel</a>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <div class="video-thumb-placeholder">🤖</div>
+        <div class="video-body">
+          <div class="vcaption">Openrouter + n8n workflows en 60 seg</div>
+          <div class="vmeta">
+            <div class="vmeta-item">👁 <span>6,620</span> vistas</div>
+            <div class="vmeta-item">💬 <span>20</span> cmts</div>
+            <div class="vmeta-item">📅 <span>29 Abr 2026</span></div>
+          </div>
+          <div style="font-size:12px;color:var(--text3);line-height:1.5;">Tutorial ultra-rápido de integración. Alto ratio vistas/comments sugiere más viewers pasivos — el CTA no fue suficientemente fuerte.</div>
+          <a class="card-link" href="https://www.instagram.com/reel/DXu2pucDbD-/" target="_blank">→ Ver reel</a>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <div class="video-thumb-placeholder">💸</div>
+        <div class="video-body">
+          <div class="vcaption">Stop paying OpenAI — LM Studio setup</div>
+          <div class="vmeta">
+            <div class="vmeta-item">👁 <span>5,459</span> vistas</div>
+            <div class="vmeta-item">💬 <span>283</span> cmts</div>
+            <div class="vmeta-item">📅 <span>1 May 2026</span></div>
+          </div>
+          <div style="font-size:12px;color:var(--text3);line-height:1.5;">Mejor ratio vistas/comentarios de todos los reels. "Stop paying" como hook + ahorro de dinero = doble gatillo emocional. CTA "W" funcionó perfectamente.</div>
+          <a class="card-link" href="https://www.instagram.com/reel/DXzex0PtP1f/" target="_blank">→ Ver reel</a>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <div class="video-thumb-placeholder">🎨</div>
+        <div class="video-body">
+          <div class="vcaption">Evita el AI slop con Google Stitch + Claude</div>
+          <div class="vmeta">
+            <div class="vmeta-item">👁 <span>5,261</span> vistas</div>
+            <div class="vmeta-item">💬 <span>229</span> cmts</div>
+            <div class="vmeta-item">📅 <span>28 Abr 2026</span></div>
+          </div>
+          <div style="font-size:12px;color:var(--text3);line-height:1.5;">Keyword CTA única ("Purple") = fácil de recordar y escribir. Problema muy visible en la comunidad AI. Alta conversión de vista a comentario.</div>
+          <a class="card-link" href="https://www.instagram.com/reel/DXsQtwOjSOw/" target="_blank">→ Ver reel</a>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <div class="video-thumb-placeholder">⚡</div>
+        <div class="video-body">
+          <div class="vcaption">AI Agents que realmente funcionan</div>
+          <div class="vmeta">
+            <div class="vmeta-item">👁 <span>3,278</span> vistas</div>
+            <div class="vmeta-item">💬 <span>180</span> cmts</div>
+            <div class="vmeta-item">📅 <span>30 Abr 2026</span></div>
+          </div>
+          <div style="font-size:12px;color:var(--text3);line-height:1.5;">"Everyone's building... nobody's getting them to work" — contraste clásico + posicionamiento de insider. Fuerte conversion rate de vista a comment.</div>
+          <a class="card-link" href="https://www.instagram.com/reel/DXw1cguNHe0/" target="_blank">→ Ver reel</a>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <div class="video-thumb-placeholder">📚</div>
+        <div class="video-body">
+          <div class="vcaption">Documentación automatizada con Docsio AI</div>
+          <div class="vmeta">
+            <div class="vmeta-item">👁 <span>2,542</span> vistas</div>
+            <div class="vmeta-item">💬 <span>125</span> cmts</div>
+            <div class="vmeta-item">📅 <span>30 Abr 2026</span></div>
+          </div>
+          <div style="font-size:12px;color:var(--text3);line-height:1.5;">Dolor universal de devs (hacer docs). Hook de confesión personal ("I avoided for months"). CTA "DOCS" = simple y directo. Buen ratio engagement.</div>
+          <a class="card-link" href="https://www.instagram.com/reel/DXxNluHNfIs/" target="_blank">→ Ver reel</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PATTERNS -->
+  <div class="section">
+    <div class="section-title"><div class="icon">🔍</div> Patrones Detectados</div>
+    <div class="patterns-grid">
+
+      <div class="pattern-card">
+        <h3>Distribución de Formato</h3>
+        <div class="format-visual">
+          <div class="fmt-item">
+            <div class="fmt-circle reel">6</div>
+            <div class="fmt-label">Reels</div>
+            <div class="fmt-sublabel">avg 157 cmts</div>
+          </div>
+          <div class="fmt-item">
+            <div class="fmt-circle carousel">5</div>
+            <div class="fmt-label">Carruseles</div>
+            <div class="fmt-sublabel">avg 587 cmts</div>
+          </div>
+          <div class="fmt-item">
+            <div class="fmt-circle photo">1</div>
+            <div class="fmt-label">Fotos</div>
+            <div class="fmt-sublabel">150 cmts</div>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--text3);">Los carruseles generan 3.7× más comentarios que los reels en este perfil. El único post foto rindió bien (150 cmts) probablemente por su contenido confesional.</p>
+      </div>
+
+      <div class="pattern-card">
+        <h3>Motor de Engagement</h3>
+        <ul>
+          <li>100% de posts activos usan keyword CTA</li>
+          <li>CTAs usados: "FOLDER", "W", "Purple", "Warmy", "DOCS"</li>
+          <li>Siempre en el último párrafo de la caption</li>
+          <li>Conectados a ManyChat para auto-DM</li>
+          <li>La palabra clave es siempre corta (1 palabra)</li>
+          <li>Crea un loop: ver → comentar → recibir DM → convertir</li>
+        </ul>
+      </div>
+
+      <div class="pattern-card">
+        <h3>Estructura de Captions</h3>
+        <ul>
+          <li>83% son "Larga" (+300 caracteres)</li>
+          <li>0 hashtags en todos los posts — no los necesita</li>
+          <li>Hook en la primera línea = problema o provocación</li>
+          <li>Cuerpo en líneas cortas + espacio entre párrafos</li>
+          <li>Closing = reflexión + CTA directo</li>
+          <li>Tono informal americano ("you", "they", contraction)</li>
+        </ul>
+      </div>
+
+      <div class="pattern-card">
+        <h3>Temas que Dominan</h3>
+        <div class="bar-row">
+          <div class="bar-label">Claude AI</div>
+          <div class="bar-track"><div class="bar-fill" style="width:90%;background:linear-gradient(90deg,#7c5cfc,#a78bfa);"></div></div>
+          <div class="bar-value">~4 posts</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Free tools</div>
+          <div class="bar-track"><div class="bar-fill" style="width:65%;background:linear-gradient(90deg,#059669,#34d399);"></div></div>
+          <div class="bar-value">~3 posts</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Cold email</div>
+          <div class="bar-track"><div class="bar-fill" style="width:45%;background:linear-gradient(90deg,#d97706,#f59e0b);"></div></div>
+          <div class="bar-value">~2 posts</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">AI models</div>
+          <div class="bar-track"><div class="bar-fill" style="width:35%;background:linear-gradient(90deg,#2563eb,#60a5fa);"></div></div>
+          <div class="bar-value">~2 posts</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Vibe coding</div>
+          <div class="bar-track"><div class="bar-fill" style="width:20%;background:linear-gradient(90deg,#dc2626,#f87171);"></div></div>
+          <div class="bar-value">~1 post</div>
+        </div>
+      </div>
+
+      <div class="pattern-card">
+        <h3>Anatomía del Hook</h3>
+        <ul>
+          <li><strong>Contraste:</strong> "Most people X. Almost nobody Y."</li>
+          <li><strong>Anti-gasto:</strong> "Stop paying OpenAI / Stop doing X"</li>
+          <li><strong>Confesión:</strong> "Vibe coding tricked me..."</li>
+          <li><strong>Número:</strong> "8 AI architectures / 5 folders"</li>
+          <li><strong>Exclusividad:</strong> "The gap between people who get this..."</li>
+        </ul>
+        <p style="margin-top:10px;font-size:12px;color:var(--text3);">El hook de contraste es el más repetido y el que mejor correlaciona con alto engagement.</p>
+      </div>
+
+      <div class="pattern-card">
+        <h3>Ritmo de Publicación</h3>
+        <ul>
+          <li>Alta frecuencia: 4–5 posts en un solo día (30 Abr)</li>
+          <li>Mix de formatos el mismo día (Reel + Carrusel + Foto)</li>
+          <li>No hay patrón de horario detectable (API no provee hora)</li>
+          <li>Posts fijados: 2 carruseles educativos + 1 reel inspiracional</li>
+          <li>El contenido evergreen se fija para tráfico de perfil continuo</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- VIRAL SCRIPTS -->
+  <div class="section">
+    <div class="section-title"><div class="icon">✍️</div> 8 Guiones Virales — Estilo @leadgenman</div>
+    <div class="scripts-list">
+
+      <!-- SCRIPT 1 -->
+      <div class="script-card">
+        <div class="script-header">
+          <div class="script-num">1</div>
+          <div>
+            <h3>Stop Using ChatGPT for Everything</h3>
+            <div class="stag">Carrusel · Formato "Lista de X herramientas" · CTA keyword</div>
+          </div>
+        </div>
+        <div class="script-body">
+          <div class="script-section">
+            <div class="slabel">Hook (primera diapositiva / primera línea)</div>
+            <div class="stext hook">Stop using ChatGPT for everything.<br><br>There are 7 tools that do it better, faster, and for free.</div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Estructura del carrusel (diapositivas)</div>
+            <div class="stext">
+              Slide 1: Hook — "Stop using ChatGPT for everything"<br>
+              Slide 2: Para código → Claude (mejor reasoning)<br>
+              Slide 3: Para imágenes → Midjourney / Ideogram free tier<br>
+              Slide 4: Para búsqueda → Perplexity<br>
+              Slide 5: Para video → Kling AI<br>
+              Slide 6: Para voz → ElevenLabs free<br>
+              Slide 7: Para automatización → n8n self-hosted<br>
+              Slide 8: Para datos → Datasette / Airtable AI<br>
+              Slide 9 (cierre): "Comment TOOLS and I'll send you the full list with links"
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Caption sugerida</div>
+            <div class="stext caption-draft">
+              Stop using ChatGPT for everything.<br><br>
+              I know, I know — it's convenient.<br>
+              But there are 7 specialized tools that outperform it in their lane.<br><br>
+              And most of them are free.<br><br>
+              The shift from "one tool for everything" to "right tool for each job" is what separates builders who ship from builders who spin.<br><br>
+              Comment TOOLS and I'll send you the full breakdown in your DMs.
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Hashtags</div>
+            <div class="hashtags">
+              <span class="htag">#AItools</span><span class="htag">#buildinpublic</span><span class="htag">#ChatGPT</span><span class="htag">#Claude</span><span class="htag">#aiautomation</span><span class="htag">#techtools</span><span class="htag">#solopreneur</span>
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Por qué funcionaría</div>
+            <div class="stext">Mismo patrón que el post #1 (2,379 cmts). Lista con número, herramientas conocidas, CTA de una palabra. La audiencia de leadgenman ya confía en sus listas de tools — este post encaja directamente en ese patrón ganador.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCRIPT 2 -->
+      <div class="script-card">
+        <div class="script-header">
+          <div class="script-num">2</div>
+          <div>
+            <h3>I Wasted $400 on AI APIs Before I Found This</h3>
+            <div class="stag">Reel · Formato confesión + solución · CTA keyword</div>
+          </div>
+        </div>
+        <div class="script-body">
+          <div class="script-section">
+            <div class="slabel">Guion del Reel (60–90 segundos)</div>
+            <div class="stext">
+              [0-5s] Hook en cámara o texto: "I was paying $400/month in AI API fees. Here's the setup that brought it to $0."<br><br>
+              [5-15s] Problema: "Most builders pay for OpenAI, Anthropic, AND Gemini because they don't know a better way."<br><br>
+              [15-45s] Solución paso a paso (screencast):<br>
+              → Instalar LM Studio<br>
+              → Descargar DeepSeek R1 o Qwen3<br>
+              → Activar Developer Mode<br>
+              → Copiar endpoint local<br>
+              → Pegarlo en n8n/Make como nueva credential<br><br>
+              [45-60s] Cierre: "Your data stays local. Zero API keys. Zero bills."<br><br>
+              [CTA] "Comment FREE to get the exact models I use + settings file"
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Caption sugerida</div>
+            <div class="stext caption-draft">
+              I was paying $400/month in AI API fees.<br><br>
+              That's not the problem.<br>
+              The problem is I didn't have to.<br><br>
+              LM Studio runs DeepSeek, Qwen3, and Llama locally on your machine.<br>
+              No keys. No bills. No data leaving your system.<br><br>
+              Setup takes 4 minutes flat.<br><br>
+              Comment FREE and I'll send you the model list + my settings file directly.
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Hashtags</div>
+            <div class="hashtags">
+              <span class="htag">#LMStudio</span><span class="htag">#DeepSeek</span><span class="htag">#AIcost</span><span class="htag">#localAI</span><span class="htag">#n8n</span><span class="htag">#openAI</span><span class="htag">#aitools</span>
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Por qué funcionaría</div>
+            <div class="stext">Replica el patrón exacto del post #2 (283 cmts, 5K vistas). "Stop paying" + ahorro concreto + tutorial rápido + CTA de una palabra. El dolor del gasto en APIs es universal entre su audiencia.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCRIPT 3 -->
+      <div class="script-card">
+        <div class="script-header">
+          <div class="script-num">3</div>
+          <div>
+            <h3>Claude Code: 5 System Prompts que Cambian Todo</h3>
+            <div class="stag">Carrusel · Formato "Secrets insiders" · Alta intención de guardado</div>
+          </div>
+        </div>
+        <div class="script-body">
+          <div class="script-section">
+            <div class="slabel">Hook (primera diapositiva)</div>
+            <div class="stext hook">5 system prompts that turn Claude Code from a chatbot into a senior developer.<br><br>Most people skip this. That's why their AI writes mediocre code.</div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Estructura del carrusel</div>
+            <div class="stext">
+              Slide 1: Hook<br>
+              Slide 2: Prompt 1 — "Act as a code reviewer: identify edge cases, not just bugs"<br>
+              Slide 3: Prompt 2 — "Before writing any code, ask me 3 clarifying questions"<br>
+              Slide 4: Prompt 3 — "Write tests first, then implementation (TDD mode)"<br>
+              Slide 5: Prompt 4 — "Explain every decision like I'll maintain this in 2 years"<br>
+              Slide 6: Prompt 5 — "Flag any assumption you're making about my business logic"<br>
+              Slide 7: Cierre + CTA: "Comment PROMPTS for the full 12-prompt starter pack"
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Caption sugerida</div>
+            <div class="stext caption-draft">
+              Most people use Claude Code like Google.<br><br>
+              They type a question. They get an answer. They move on.<br><br>
+              That's not how you get senior-level output.<br><br>
+              The difference is the system prompt.<br>
+              It's the difference between a junior who needs constant direction and a senior who owns the problem.<br><br>
+              Here are 5 prompts I use daily — and why each one matters.<br><br>
+              Comment PROMPTS and I'll send you the full 12-prompt starter pack.
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Hashtags</div>
+            <div class="hashtags">
+              <span class="htag">#ClaudeCode</span><span class="htag">#AIprompts</span><span class="htag">#promptengineering</span><span class="htag">#buildertools</span><span class="htag">#AIagents</span><span class="htag">#coding</span>
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Por qué funcionaría</div>
+            <div class="stext">Los posts sobre Claude Code del perfil son los más consistentes en engagement. La audiencia quiere sacarle más valor a la herramienta. Este carrusel es altamente guardable (referencia futura) = más alcance orgánico.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCRIPT 4 -->
+      <div class="script-card">
+        <div class="script-header">
+          <div class="script-num">4</div>
+          <div>
+            <h3>AI Agents están Rotos — A Menos que Uses Esto</h3>
+            <div class="stag">Reel · Formato "Problema + Fix en 60s" · Contraste clásico</div>
+          </div>
+        </div>
+        <div class="script-body">
+          <div class="script-section">
+            <div class="slabel">Guion del Reel</div>
+            <div class="stext">
+              [0-5s] Hook: "Everyone's building AI agents. Nobody's talking about why 80% of them fail in production."<br><br>
+              [5-20s] El problema: "Memory. Without persistent memory, your agent forgets context between sessions. It's why it gives you different answers every time."<br><br>
+              [20-50s] La solución (screencast o slides animadas):<br>
+              → Mostrar un agente sin memoria (respuesta inconsistente)<br>
+              → Agregar mem0 / Zep / vector DB como capa de memoria<br>
+              → Mostrar el mismo agente con memoria (respuesta coherente)<br><br>
+              [50-60s] "This one layer changes everything about agent reliability."<br><br>
+              [CTA] "Comment MEMORY for the exact stack I use."
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Caption sugerida</div>
+            <div class="stext caption-draft">
+              Everyone's building AI agents.<br>
+              Almost nobody's adding memory.<br><br>
+              Without it, your agent starts fresh every session.<br>
+              Different answers. Inconsistent behavior. Broken workflows.<br><br>
+              The fix isn't complicated — it's just unknown to most builders.<br><br>
+              A persistent memory layer (mem0, Zep, or a simple vector DB) changes everything.<br><br>
+              Comment MEMORY and I'll send you the exact architecture I use.
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Hashtags</div>
+            <div class="hashtags">
+              <span class="htag">#AIagents</span><span class="htag">#agentmemory</span><span class="htag">#LLMops</span><span class="htag">#n8n</span><span class="htag">#buildinpublic</span><span class="htag">#vectorDB</span><span class="htag">#mem0</span>
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Por qué funcionaría</div>
+            <div class="stext">Replica el hook del post #5 ("Everyone's building... nobody's getting them to work"). La memoria de agentes es un pain point real y técnico — exactamente el contenido que la audiencia de leadgenman consume y comparte.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCRIPT 5 -->
+      <div class="script-card">
+        <div class="script-header">
+          <div class="script-num">5</div>
+          <div>
+            <h3>El Stack de Lead Gen que Nadie te Enseña</h3>
+            <div class="stag">Carrusel · Formato "Stack completo" · Alta intención de guardado + DM</div>
+          </div>
+        </div>
+        <div class="script-body">
+          <div class="script-section">
+            <div class="slabel">Hook (primera diapositiva)</div>
+            <div class="stext hook">The lead gen stack that goes from cold list to booked call — fully automated.<br><br>9 tools. Zero manual work after setup.</div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Estructura del carrusel</div>
+            <div class="stext">
+              Slide 1: Hook<br>
+              Slide 2: Paso 1 — Prospecting: Apollo.io + Clay para enriquecer<br>
+              Slide 3: Paso 2 — Warmup: Instantly o Mailreach antes de enviar<br>
+              Slide 4: Paso 3 — Copywriting: Claude para personalizar en bulk<br>
+              Slide 5: Paso 4 — Sending: Smartlead con rotación de buzones<br>
+              Slide 6: Paso 5 — Seguimiento: n8n auto-reply cuando abren<br>
+              Slide 7: Paso 6 — Calificación: IA clasifica replies como interesado/no<br>
+              Slide 8: Paso 7 — Booking: Calendly link automático a leads calificados<br>
+              Slide 9: Cierre + CTA: "Comment STACK for the full SOP with templates"
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Caption sugerida</div>
+            <div class="stext caption-draft">
+              Most cold email setups are missing 6 of these 9 steps.<br><br>
+              They nail the copy. They skip the infrastructure.<br>
+              Then they wonder why their emails hit spam on day one.<br><br>
+              The full stack goes from raw list to booked call with zero manual work after setup.<br>
+              Every step matters. Every tool has a reason.<br><br>
+              Comment STACK and I'll send you the full SOP with templates.
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Hashtags</div>
+            <div class="hashtags">
+              <span class="htag">#leadgeneration</span><span class="htag">#coldemail</span><span class="htag">#salesautomation</span><span class="htag">#AItools</span><span class="htag">#outbound</span><span class="htag">#n8n</span><span class="htag">#Clay</span>
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Por qué funcionaría</div>
+            <div class="stext">Combina los dos pilares del perfil: lead gen + AI tools. Los carruseles de "stack completo" tienen el mayor ratio de guardados — la audiencia los usa como referencia. El CTA "STACK" es memorable y claro.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCRIPT 6 -->
+      <div class="script-card">
+        <div class="script-header">
+          <div class="script-num">6</div>
+          <div>
+            <h3>Vibe Coding Me Costó 2 Semanas — Esto es lo que Aprendí</h3>
+            <div class="stag">Foto o Reel · Formato confesión · Alta resonancia emocional</div>
+          </div>
+        </div>
+        <div class="script-body">
+          <div class="script-section">
+            <div class="slabel">Caption completa (Foto confesional)</div>
+            <div class="stext caption-draft">
+              Vibe coding cost me 2 weeks.<br><br>
+              The AI wrote everything I asked for.<br>
+              It looked right. It ran locally. I shipped it.<br><br>
+              Three days later — a client's data was exposed.<br>
+              Not because the AI made a mistake.<br>
+              Because I never asked it to audit for security.<br><br>
+              That's the vibe coding trap:<br>
+              You get the output so fast that you forget to think like an engineer.<br><br>
+              Now I have one rule before shipping anything:<br>
+              "Claude, act as a security auditor. What would break in production?"<br><br>
+              That question has saved me 4 times this month.<br><br>
+              Comment AUDIT for the exact security prompt I use before every deploy.
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Por qué funcionaría</div>
+            <div class="stext">Replica el patrón del post de "Vibe coding tricked me" (150 cmts sin ser reel). Las confesiones de fallo + lección aprendida generan respuestas emocionales. La audiencia se identifica y comenta. El CTA "AUDIT" resuelve el pain directamente.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCRIPT 7 -->
+      <div class="script-card">
+        <div class="script-header">
+          <div class="script-num">7</div>
+          <div>
+            <h3>Claude vs GPT-4o vs Gemini — Para Lead Gen (Comparativa Real)</h3>
+            <div class="stag">Carrusel · Formato "Comparativa" · Alto potencial viral por debate</div>
+          </div>
+        </div>
+        <div class="script-body">
+          <div class="script-section">
+            <div class="slabel">Hook</div>
+            <div class="stext hook">I tested Claude, GPT-4o, and Gemini on 5 real lead gen tasks.<br><br>The results surprised me — and not in the way you'd expect.</div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Estructura del carrusel</div>
+            <div class="stext">
+              Slide 1: Hook<br>
+              Slide 2: Task 1 — Escribir cold email personalizado (ganador: Claude)<br>
+              Slide 3: Task 2 — Clasificar replies como interesado/no (ganador: GPT-4o)<br>
+              Slide 4: Task 3 — Enriquecer datos de un lead desde LinkedIn (ganador: Gemini)<br>
+              Slide 5: Task 4 — Generar variantes A/B de subject lines (ganador: Claude)<br>
+              Slide 6: Task 5 — Resumir call transcript en acción (ganador: Claude)<br>
+              Slide 7: Tabla resumen comparativa<br>
+              Slide 8: "Use the right model for the right job. Comment MODEL for my exact routing logic."
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Caption sugerida</div>
+            <div class="stext caption-draft">
+              I stopped having a "favorite AI."<br><br>
+              I started having a routing system.<br><br>
+              Claude for writing. GPT-4o for classification. Gemini for research.<br>
+              Each one wins in its lane. None wins at everything.<br><br>
+              I ran 5 real lead gen tasks through each one and documented the results.<br>
+              The gaps are bigger than I expected.<br><br>
+              Comment MODEL for my exact routing logic + the prompts I use for each.
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Por qué funcionaría</div>
+            <div class="stext">Las comparativas siempre generan debate en comentarios ("yo uso X porque..."). El ángulo práctico de "lead gen tasks" es específico al nicho. La "routing logic" como lead magnet es irresistible para su audiencia de builders.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCRIPT 8 -->
+      <div class="script-card">
+        <div class="script-header">
+          <div class="script-num">8</div>
+          <div>
+            <h3>El CLAUDE.md que Uso en Cada Proyecto — Plantilla Completa</h3>
+            <div class="stag">Carrusel · Formato "Template reveal" · Máximo guardado · CTA directo</div>
+          </div>
+        </div>
+        <div class="script-body">
+          <div class="script-section">
+            <div class="slabel">Hook</div>
+            <div class="stext hook">The CLAUDE.md template I use on every project.<br><br>Copy-paste ready. Took me 3 months of trial and error to build.</div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Estructura del carrusel</div>
+            <div class="stext">
+              Slide 1: Hook — "El CLAUDE.md que uso en cada proyecto"<br>
+              Slide 2: Qué es CLAUDE.md y por qué importa (la IA lo lee primero)<br>
+              Slide 3: Sección 1 — Project context (nombre, stack, objetivo)<br>
+              Slide 4: Sección 2 — Code style rules (cómo debe escribir)<br>
+              Slide 5: Sección 3 — What NOT to do (no cambiar deps sin pedir, etc.)<br>
+              Slide 6: Sección 4 — File structure overview<br>
+              Slide 7: Sección 5 — Testing & deployment checklist<br>
+              Slide 8: Template completo visible (screenshot legible)<br>
+              Slide 9: CTA — "Comment MD and I'll send you the full template to copy"
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Caption sugerida</div>
+            <div class="stext caption-draft">
+              CLAUDE.md is the first thing Claude Code reads when it opens your project.<br><br>
+              Most people leave it empty. Or use it as a quick readme.<br><br>
+              That's a mistake.<br><br>
+              When it's built right, it acts like an onboarding document for a senior dev.<br>
+              It sets the rules. It sets the context. It eliminates repeated corrections.<br><br>
+              Here's the exact template I use — built over 3 months of daily Claude Code sessions.<br><br>
+              Comment MD and I'll send it to your DMs ready to paste.
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Hashtags</div>
+            <div class="hashtags">
+              <span class="htag">#ClaudeCode</span><span class="htag">#CLAUDE</span><span class="htag">#AIcoding</span><span class="htag">#promptengineering</span><span class="htag">#devtools</span><span class="htag">#buildertools</span>
+            </div>
+          </div>
+          <div class="script-section">
+            <div class="slabel">Por qué funcionaría</div>
+            <div class="stext">Es el follow-up natural al post #1 de la cuenta (2,379 cmts sobre "5 Claude Code folders"). La audiencia que guardó ese post querrá este también. CLAUDE.md es el elemento central de toda su estrategia de contenido técnico — y el CTA "MD" es memorable y simple.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RECOMMENDATION -->
+  <div class="section">
+    <div class="section-title"><div class="icon">🎯</div> Recomendación Final</div>
+    <div style="background:linear-gradient(135deg, rgba(124,92,252,0.12) 0%, rgba(52,211,153,0.08) 100%); border:1px solid rgba(124,92,252,0.3); border-radius:16px; padding:28px;">
+      <div style="font-size:18px;font-weight:800;color:var(--accent2);margin-bottom:12px;">Apuesta #1: Guion 8 — El CLAUDE.md que uso en cada proyecto</div>
+      <p style="color:var(--text);font-size:14px;line-height:1.7;margin-bottom:16px;">
+        El post con mayor engagement de todo el perfil (2,379 comentarios) fue sobre "5 Claude Code folders". Este carrusel es su continuación directa y natural — la misma audiencia que guardó ese post va a querer el template completo. La combinación de <strong>template concreto + "3 meses de prueba" como credencial + CTA de una sola letra</strong> replica exactamente la fórmula ganadora.
+      </p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--text2);">
+          <strong style="color:var(--accent3);">Formato:</strong> Carrusel 8–9 slides
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--text2);">
+          <strong style="color:var(--accent3);">CTA:</strong> "Comment MD"
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--text2);">
+          <strong style="color:var(--accent3);">Lead magnet:</strong> Template CLAUDE.md listo para pegar
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--text2);">
+          <strong style="color:var(--accent3);">Proyección:</strong> 800–2,000+ comentarios
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  Análisis generado el 2 de mayo 2026 · @leadgenman · 340,307 seguidores · Datos via ScrapeCreators API<br>
+  <span style="color:var(--accent);font-weight:600;">Herramienta de análisis de contenido — uso interno</span>
+</div>
+
+</body>
+</html>
